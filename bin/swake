@@ -1,0 +1,79 @@
+#!/usr/bin/env node
+
+var argv = process.argv.slice( 2 ),
+    arg,
+    args = [],
+    lib_path = __dirname + '/../lib/',
+    logly = require( 'logly' ),
+    options = {},
+    path = require( 'path' ),
+    program = path.basename( __filename ),
+    swake = require( lib_path + 'swake.js' );
+
+logly.name( program );
+
+var usage = [
+      "usage",
+      "  " + program + " ( -e SWAKETASKFILE | SWAKETASK ) [OPTIONS] [ARG]*",
+      ""
+    ].join( '\n' ),
+    help = [
+      usage,
+      "options:",
+      "  --debug                  Debug mode",
+      "  -e                       Executes SWAKETASKFILE using provided ARGs",
+      "  -h, --help               Displays this information",
+      "  --swake-path SWAKE_PATH  Specifies SWAKE_PATH to use",
+      ""
+    ].join( '\n' );
+
+if ( argv.length == 0 ) {
+  logly.stdout( help );
+  process.exit( 0 );
+}
+
+while ( arg = argv.shift() ) {
+  if ( arg === program ) continue;
+  
+  if ( arg[ 0 ] !== '-' ) {
+    args.push( arg );
+  } else {
+    arg = arg.match( /--?(.+)/ )[ 1 ];
+    
+    switch ( arg ) {
+      case 'debug':
+        logly.mode( 'debug' );
+        break;
+      case 'e':
+        options.swakeTaskFile = argv.shift();
+        if ( ! options.swakeTaskFile ) {
+          logly.stdout( usage );
+          process.exit( 0 );
+        }
+        options.executionMode = true;
+        break
+      case 'help':
+      case 'h':
+        logly.stdout( help );
+        process.exit( 0 );
+        break;
+      case 'swake-path':
+        options.swakePath = argv.shift();
+        if ( ! options.swakePath ) {
+          logly.stdout( usage );
+          process.exit( 0 );
+        }
+        break;
+    }
+  }
+}
+
+if ( options.executionMode ) {
+  swake.executeSwakeFile( options.swakeTaskFile, args, options );
+} else {
+  if ( args.length < 1 ) {
+    logly.stdout( usage );
+    process.exit( 0 );
+  }
+  swake.swake( args.shift(), args, options );
+}

@@ -1,0 +1,13 @@
+{ "name" : "swake"
+, "description" : "Task execution tool used by swarm"
+, "version" : "0.1.0"
+, "homepage" : "https://github.com/tristanls/swake"
+, "author" : "Tristan Slominski <tristan.slominski@gmail.com> (http://github.com/tristanls)"
+, "bin" : "./bin/swake"
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/tristanls/swake.git" }
+, "dependencies" :
+  { "logly" : "1.x.x" }
+, "engines" : { "node" : "0.4.x" }
+}
